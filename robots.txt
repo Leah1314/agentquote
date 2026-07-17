@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://leah1314.github.io/agentquote/sitemap.xml
