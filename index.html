@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgentQuote | Agent Route Decision Layer</title>
+    <meta
+      name="description"
+      content="AgentQuote predicts quality, reliability, developer effort, token efficiency, and the best AI agent route before work starts."
+    />
+    <meta property="og:title" content="AgentQuote | Agent Route Decision Layer" />
+    <meta
+      property="og:description"
+      content="Choose the right AI agent route before the run starts."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="AgentQuote home">
+        <span class="brand-mark">AQ</span>
+        <span>AgentQuote</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#route">Route</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#how">How it works</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="workspace" id="route">
+        <div class="intro-panel">
+          <p class="eyebrow">Agent route intelligence</p>
+          <h1>Choose the right agent before the run starts.</h1>
+          <p class="intro-text">
+            AgentQuote predicts expected quality, agent fit, developer effort,
+            token efficiency, and reliability so teams know when Codex, Claude,
+            open models, local models, or a routed combination makes the most sense.
+          </p>
+          <div class="intro-metrics" aria-label="Product capabilities">
+            <span>Quality-aware routing</span>
+            <span>Agent fit analysis</span>
+            <span>Token efficiency signals</span>
+          </div>
+        </div>
+
+        <section class="quote-panel" aria-labelledby="quote-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Decision workspace</p>
+              <h2 id="quote-title">Task profile</h2>
+            </div>
+            <span class="status-pill" id="confidenceBadge">Ready</span>
+          </div>
+
+          <form id="quoteForm" class="quote-form">
+            <label class="full">
+              Task
+              <textarea
+                name="task"
+                rows="5"
+                placeholder="Example: Build a SaaS landing page with auth, pricing, and Stripe checkout."
+              ></textarea>
+            </label>
+
+            <div class="form-grid">
+              <label>
+                Project context size
+                <select name="repoSize">
+                  <option value="small">Small, under 20 files</option>
+                  <option value="medium" selected>Medium, 20-120 files</option>
+                  <option value="large">Large, 120+ files</option>
+                </select>
+              </label>
+              <label>
+                Optimization goal
+                <select name="goal">
+                  <option value="best" selected>Best outcome</option>
+                  <option value="balanced">Balanced</option>
+                  <option value="fast">Fastest reliable</option>
+                  <option value="privacy">Privacy-first</option>
+                  <option value="efficient">Most token-efficient</option>
+                </select>
+              </label>
+              <label>
+                Task priority
+                <select name="priority">
+                  <option value="quality" selected>Quality</option>
+                  <option value="speed">Speed</option>
+                  <option value="efficiency">Cost efficiency</option>
+                  <option value="privacy">Privacy</option>
+                </select>
+              </label>
+              <label>
+                Tolerance for manual review
+                <select name="reviewTolerance">
+                  <option value="low" selected>Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="action-row">
+              <button class="button primary" type="submit">Generate route</button>
+              <button class="button secondary" type="button" id="sampleTask">
+                Load sample task
+              </button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <section class="results-layout" aria-live="polite">
+        <section class="recommendation-panel">
+          <div class="panel-heading compact">
+            <div>
+              <p class="eyebrow">Best route for this task</p>
+              <h2 id="routeTitle">Codex-guided combo</h2>
+            </div>
+            <span class="status-pill green" id="goalBadge">Best outcome</span>
+          </div>
+
+          <div class="score-strip">
+            <div>
+              <span>Expected quality</span>
+              <strong id="qualityScore">89</strong>
+            </div>
+            <div>
+              <span>Token efficiency</span>
+              <strong id="efficiencyScore">82</strong>
+              <small id="costDetail">1.1k tokens / quality pt</small>
+            </div>
+            <div>
+              <span>Developer effort</span>
+              <strong id="effortScore">Low</strong>
+            </div>
+            <div>
+              <span>Reliability</span>
+              <strong id="reliabilityScore">High</strong>
+            </div>
+          </div>
+
+          <ol class="route-timeline" id="routeTimeline"></ol>
+        </section>
+
+        <aside class="rationale-panel">
+          <p class="eyebrow">Route rationale</p>
+          <div class="rationale-list">
+            <article>
+              <h3>Why this route</h3>
+              <p id="whyRoute"></p>
+            </article>
+            <article>
+              <h3>Where it may fail</h3>
+              <p id="failRoute"></p>
+            </article>
+            <article>
+              <h3>When to switch</h3>
+              <p id="switchRoute"></p>
+            </article>
+          </div>
+        </aside>
+
+        <section class="comparison-panel full-width">
+          <div class="panel-heading compact">
+            <div>
+              <p class="eyebrow">Decision table</p>
+              <h2>Agent route comparison</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Agent route</th>
+                  <th>Best for</th>
+                  <th>Expected quality</th>
+                  <th>Token efficiency</th>
+                  <th>Developer effort</th>
+                  <th>Tradeoff</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="insight-grid" id="evidence">
+        <article class="insight-card">
+          <p class="eyebrow">Task profile</p>
+          <h3 id="taskType">Frontend full-stack</h3>
+          <p id="taskSummary">
+            UI implementation plus integration work. Use retrieval first, then
+            a strong coding agent for high-leverage edits.
+          </p>
+          <div class="tag-row" id="skillTags"></div>
+        </article>
+
+        <article class="insight-card">
+          <p class="eyebrow">Evidence</p>
+          <h3>Based on 4 similar tasks</h3>
+          <div class="evidence-list" id="benchmarkList"></div>
+        </article>
+
+        <article class="insight-card">
+          <p class="eyebrow">Guardrail</p>
+          <h3 id="policyVerdict">Approval before sensitive context</h3>
+          <p id="policyNote">
+            Require approval before sending repository context, customer data,
+            secrets, or production credentials to external providers.
+          </p>
+        </article>
+      </section>
+
+      <section class="how-section" id="how">
+        <div class="section-heading">
+          <p class="eyebrow">How AgentQuote works</p>
+          <h2>Four compact steps before an agent run.</h2>
+        </div>
+        <div class="how-grid">
+          <article>
+            <span>01</span>
+            <h3>Profile the task</h3>
+            <p>Classify the work by context size, ambiguity, skills, and review risk.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Retrieve evidence</h3>
+            <p>Compare against similar completed tasks and observed route outcomes.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Score routes</h3>
+            <p>Balance quality, reliability, effort, speed, privacy, and token value.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Monitor feedback</h3>
+            <p>Update recommendations as runs finish, fail, or need human review.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentQuote</span>
+      <span>Choose agent routes by outcome, effort, reliability, and token value.</span>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
