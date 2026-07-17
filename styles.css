@@ -318,6 +318,7 @@ input:focus {
 .rationale-panel,
 .comparison-panel,
 .insight-card {
+  min-width: 0;
   padding: clamp(20px, 3vw, 28px);
 }
 
@@ -430,7 +431,9 @@ td span {
 
 .table-wrap {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
 }
 
 table {
@@ -470,7 +473,7 @@ td strong {
 }
 
 .insight-card {
-  min-height: 240px;
+  min-height: 190px;
 }
 
 .insight-card p {
@@ -486,11 +489,11 @@ td strong {
 
 .evidence-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .evidence-list div {
-  padding: 12px;
+  padding: 10px 12px;
   background: var(--panel-soft);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -508,8 +511,10 @@ td strong {
 }
 
 .evidence-list p {
-  margin: 6px 0 0;
-  font-size: 0.9rem;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
 }
 
 .how-section {
@@ -591,10 +596,20 @@ footer span:first-child {
     padding-top: 26px;
   }
 
+  .results-layout,
+  .insight-grid,
+  .how-section {
+    overflow-x: hidden;
+  }
+
   .form-grid,
   .score-strip,
   .how-grid {
     grid-template-columns: 1fr;
+  }
+
+  table {
+    min-width: 720px;
   }
 
   .panel-heading {
