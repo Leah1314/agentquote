@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AgentQuote | Agent Route Decision Layer</title>
+    <title>AgentQuote | AI Agent Route Advisor</title>
     <meta
       name="description"
-      content="AgentQuote predicts quality, reliability, developer effort, token efficiency, and the best AI agent route before work starts."
+      content="AgentQuote helps developers choose the best AI agent setup for a task before starting an expensive run."
     />
-    <meta property="og:title" content="AgentQuote | Agent Route Decision Layer" />
+    <meta property="og:title" content="AgentQuote | AI Agent Route Advisor" />
     <meta
       property="og:description"
-      content="Choose the right AI agent route before the run starts."
+      content="Plan the right agent setup before you spend time, tokens, and engineering attention."
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -24,90 +24,90 @@
         <span>AgentQuote</span>
       </a>
       <nav class="nav-links" aria-label="Primary navigation">
-        <a href="#route">Route</a>
-        <a href="#evidence">Evidence</a>
-        <a href="#how">How it works</a>
+        <a href="#advisor">Advisor</a>
+        <a href="#signals">Signals</a>
+        <a href="#roadmap">Roadmap</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="workspace" id="route">
+      <section class="workspace" id="advisor">
         <div class="intro-panel">
-          <p class="eyebrow">Agent route intelligence</p>
-          <h1>Choose the right agent before the run starts.</h1>
+          <p class="eyebrow">Pre-run decision layer</p>
+          <h1>Pick the right agent setup before the work begins.</h1>
           <p class="intro-text">
-            AgentQuote predicts expected quality, agent fit, developer effort,
-            token efficiency, and reliability so teams know when Codex, Claude,
-            open models, local models, or a routed combination makes the most sense.
+            AgentQuote helps engineering teams decide whether a task should go to
+            Codex, Claude, an open model, a local workflow, or a staged agent route.
+            It optimizes for outcome quality and developer flow, not just token spend.
           </p>
           <div class="intro-metrics" aria-label="Product capabilities">
-            <span>Quality-aware routing</span>
-            <span>Agent fit analysis</span>
-            <span>Token efficiency signals</span>
+            <span>Agent fit</span>
+            <span>Quality risk</span>
+            <span>Human review effort</span>
           </div>
         </div>
 
         <section class="quote-panel" aria-labelledby="quote-title">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Decision workspace</p>
-              <h2 id="quote-title">Task profile</h2>
+              <p class="eyebrow">Route advisor</p>
+              <h2 id="quote-title">Describe the task</h2>
             </div>
             <span class="status-pill" id="confidenceBadge">Ready</span>
           </div>
 
           <form id="quoteForm" class="quote-form">
             <label class="full">
-              Task
+              What do you want the agent to do?
               <textarea
                 name="task"
                 rows="5"
-                placeholder="Example: Build a SaaS landing page with auth, pricing, and Stripe checkout."
+                placeholder="Example: Add Stripe checkout to a React app, update tests, and keep the implementation easy to review."
               ></textarea>
             </label>
 
             <div class="form-grid">
               <label>
-                Project context size
+                Project context
                 <select name="repoSize">
-                  <option value="small">Small, under 20 files</option>
-                  <option value="medium" selected>Medium, 20-120 files</option>
-                  <option value="large">Large, 120+ files</option>
+                  <option value="small">Small: focused task or small repo</option>
+                  <option value="medium" selected>Medium: product feature in an existing app</option>
+                  <option value="large">Large: broad codebase or unclear ownership</option>
                 </select>
               </label>
               <label>
-                Optimization goal
+                Decision goal
                 <select name="goal">
-                  <option value="best" selected>Best outcome</option>
-                  <option value="balanced">Balanced</option>
-                  <option value="fast">Fastest reliable</option>
-                  <option value="privacy">Privacy-first</option>
+                  <option value="best" selected>Best product outcome</option>
+                  <option value="balanced">Balanced route</option>
+                  <option value="fast">Fastest reliable path</option>
+                  <option value="privacy">Privacy-sensitive work</option>
                   <option value="efficient">Most token-efficient</option>
                 </select>
               </label>
               <label>
-                Task priority
+                Primary concern
                 <select name="priority">
-                  <option value="quality" selected>Quality</option>
-                  <option value="speed">Speed</option>
-                  <option value="efficiency">Cost efficiency</option>
-                  <option value="privacy">Privacy</option>
+                  <option value="quality" selected>Quality and correctness</option>
+                  <option value="speed">Speed to working draft</option>
+                  <option value="efficiency">Token value</option>
+                  <option value="privacy">Data exposure</option>
                 </select>
               </label>
               <label>
-                Tolerance for manual review
+                Human review capacity
                 <select name="reviewTolerance">
-                  <option value="low" selected>Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
+                  <option value="low" selected>Low: needs a dependable route</option>
+                  <option value="medium">Medium: some review is fine</option>
+                  <option value="high">High: drafts are acceptable</option>
                 </select>
               </label>
             </div>
 
             <div class="action-row">
-              <button class="button primary" type="submit">Generate route</button>
+              <button class="button primary" type="submit">Recommend route</button>
               <button class="button secondary" type="button" id="sampleTask">
-                Load sample task
+                Try sample task
               </button>
             </div>
           </form>
@@ -118,24 +118,24 @@
         <section class="recommendation-panel">
           <div class="panel-heading compact">
             <div>
-              <p class="eyebrow">Best route for this task</p>
-              <h2 id="routeTitle">Codex-guided combo</h2>
+              <p class="eyebrow">Recommended setup</p>
+              <h2 id="routeTitle">Codex direct implementation</h2>
             </div>
-            <span class="status-pill green" id="goalBadge">Best outcome</span>
+            <span class="status-pill green" id="goalBadge">Best product outcome</span>
           </div>
 
           <div class="score-strip">
             <div>
-              <span>Expected quality</span>
-              <strong id="qualityScore">89</strong>
+              <span>Outcome fit</span>
+              <strong id="qualityScore">High</strong>
             </div>
             <div>
-              <span>Token efficiency</span>
-              <strong id="efficiencyScore">82</strong>
-              <small id="costDetail">1.1k tokens / quality pt</small>
+              <span>Token value</span>
+              <strong id="efficiencyScore">Good</strong>
+              <small id="costDetail">Moderate usage, low coordination</small>
             </div>
             <div>
-              <span>Developer effort</span>
+              <span>Review effort</span>
               <strong id="effortScore">Low</strong>
             </div>
             <div>
@@ -148,18 +148,18 @@
         </section>
 
         <aside class="rationale-panel">
-          <p class="eyebrow">Route rationale</p>
+          <p class="eyebrow">Decision rationale</p>
           <div class="rationale-list">
             <article>
               <h3>Why this route</h3>
               <p id="whyRoute"></p>
             </article>
             <article>
-              <h3>Where it may fail</h3>
+              <h3>Watchouts</h3>
               <p id="failRoute"></p>
             </article>
             <article>
-              <h3>When to switch</h3>
+              <h3>Switch if</h3>
               <p id="switchRoute"></p>
             </article>
           </div>
@@ -168,20 +168,20 @@
         <section class="comparison-panel full-width">
           <div class="panel-heading compact">
             <div>
-              <p class="eyebrow">Decision table</p>
-              <h2>Agent route comparison</h2>
+              <p class="eyebrow">Alternatives</p>
+              <h2>Route comparison</h2>
             </div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Agent route</th>
-                  <th>Best for</th>
-                  <th>Expected quality</th>
-                  <th>Token efficiency</th>
-                  <th>Developer effort</th>
-                  <th>Tradeoff</th>
+                  <th>Agent setup</th>
+                  <th>Use when</th>
+                  <th>Outcome fit</th>
+                  <th>Token value</th>
+                  <th>Review effort</th>
+                  <th>Main tradeoff</th>
                 </tr>
               </thead>
               <tbody id="comparisonRows"></tbody>
@@ -190,58 +190,59 @@
         </section>
       </section>
 
-      <section class="insight-grid" id="evidence">
+      <section class="insight-grid" id="signals">
         <article class="insight-card">
-          <p class="eyebrow">Task profile</p>
-          <h3 id="taskType">Frontend full-stack</h3>
+          <p class="eyebrow">Task reading</p>
+          <h3 id="taskType">Implementation task</h3>
           <p id="taskSummary">
-            UI implementation plus integration work. Use retrieval first, then
-            a strong coding agent for high-leverage edits.
+            AgentQuote reads the task type, repo size, ambiguity, privacy risk,
+            and review capacity before choosing a route.
           </p>
           <div class="tag-row" id="skillTags"></div>
         </article>
 
         <article class="insight-card">
-          <p class="eyebrow">Evidence</p>
-          <h3>Based on 4 similar tasks</h3>
-          <div class="evidence-list" id="benchmarkList"></div>
+          <p class="eyebrow">Decision signals</p>
+          <h3>What the advisor considers</h3>
+          <div class="evidence-list" id="signalList"></div>
         </article>
 
         <article class="insight-card">
-          <p class="eyebrow">Guardrail</p>
-          <h3 id="policyVerdict">Approval before sensitive context</h3>
+          <p class="eyebrow">Operating note</p>
+          <h3 id="policyVerdict">Keep humans in the loop</h3>
           <p id="policyNote">
-            Require approval before sending repository context, customer data,
-            secrets, or production credentials to external providers.
+            For production code, AgentQuote treats the recommendation as a planning
+            decision. Developers still review diffs, tests, sensitive context, and
+            deployment impact.
           </p>
         </article>
       </section>
 
-      <section class="how-section" id="how">
+      <section class="how-section" id="roadmap">
         <div class="section-heading">
-          <p class="eyebrow">How AgentQuote works</p>
-          <h2>Four compact steps before an agent run.</h2>
+          <p class="eyebrow">Prototype to product</p>
+          <h2>What would make this real.</h2>
         </div>
         <div class="how-grid">
           <article>
             <span>01</span>
-            <h3>Profile the task</h3>
-            <p>Classify the work by context size, ambiguity, skills, and review risk.</p>
+            <h3>Connect run history</h3>
+            <p>Learn from actual task outcomes, model usage, retries, and review notes.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Retrieve evidence</h3>
-            <p>Compare against similar completed tasks and observed route outcomes.</p>
+            <h3>Read repo signals</h3>
+            <p>Estimate context size, test coverage, language mix, and risky files.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Score routes</h3>
-            <p>Balance quality, reliability, effort, speed, privacy, and token value.</p>
+            <h3>Recommend routes</h3>
+            <p>Choose a single agent or staged setup based on task requirements.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Monitor feedback</h3>
-            <p>Update recommendations as runs finish, fail, or need human review.</p>
+            <h3>Close the loop</h3>
+            <p>Update recommendations after each run succeeds, fails, or needs review.</p>
           </article>
         </div>
       </section>
@@ -249,7 +250,7 @@
 
     <footer>
       <span>AgentQuote</span>
-      <span>Choose agent routes by outcome, effort, reliability, and token value.</span>
+      <span>Agent routing decisions for real developer workflows.</span>
     </footer>
 
     <script src="script.js"></script>
