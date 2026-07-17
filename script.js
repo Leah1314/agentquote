@@ -76,37 +76,37 @@ const MODELS = [
   },
 ];
 
-const BENCHMARKS = [
+const DECISION_SIGNALS = [
   {
-    title: "SaaS landing page with auth",
+    title: "Task type and ambiguity",
     type: "frontend_fullstack",
     tokens: 118000,
     quality: 86,
-    outcome: "Codex-led route finished faster with fewer manual fixes.",
+    outcome: "Implementation tasks need tool reliability; research tasks need reasoning depth.",
     tags: ["frontend", "auth", "deployment"],
   },
   {
-    title: "Stripe checkout integration",
+    title: "Project context size",
     type: "backend_integration",
     tokens: 98000,
     quality: 84,
-    outcome: "Single coding agent worked well after a focused implementation plan.",
+    outcome: "Large repos benefit from scoped planning before high-cost execution.",
     tags: ["payments", "backend", "tests"],
   },
   {
-    title: "System architecture review",
+    title: "Review capacity",
     type: "architecture",
     tokens: 72000,
     quality: 91,
-    outcome: "Claude-style review improved design tradeoffs before coding.",
+    outcome: "Open-model drafts are only attractive when humans can review carefully.",
     tags: ["architecture", "reasoning", "review"],
   },
   {
-    title: "Security review of API routes",
+    title: "Privacy and escalation",
     type: "security_review",
     tokens: 89000,
     quality: 87,
-    outcome: "Local profiling reduced sensitive context exposure before escalation.",
+    outcome: "Sensitive work should start local or redacted before external escalation.",
     tags: ["security", "backend", "privacy"],
   },
   {
@@ -128,7 +128,7 @@ const BENCHMARKS = [
 ];
 
 const SAMPLE_TASK =
-  "Build a SaaS landing page with pricing, auth, and Stripe checkout. Use an existing React app, add tests, and recommend the best agent route for quality and developer effort.";
+  "Add Stripe checkout to an existing React app, update the success and cancel flows, write basic tests, and keep the code easy for a teammate to review.";
 
 const TASK_PATTERNS = [
   {
@@ -182,7 +182,7 @@ const TASK_PATTERNS = [
 ];
 
 const GOAL_LABELS = {
-  best: "Best outcome",
+  best: "Best product outcome",
   balanced: "Balanced",
   fast: "Fastest reliable",
   privacy: "Privacy-first",
@@ -198,6 +198,26 @@ function money(value) {
 
 function compactTokens(value) {
   return `${Math.round(value / 1000)}k`;
+}
+
+function band(value, high = 86, medium = 72) {
+  if (value >= high) return "High";
+  if (value >= medium) return "Medium";
+  return "Low";
+}
+
+function valueBand(value) {
+  if (value >= 88) return "Strong";
+  if (value >= 74) return "Good";
+  return "Limited";
+}
+
+function usageNote(route) {
+  if (route.id === "codex-direct") return "Moderate usage, low coordination";
+  if (route.id === "codex-claude-review") return "Higher usage, stronger design review";
+  if (route.id === "local-first") return "Lower exposure, more review work";
+  if (["qwen", "deepseek"].includes(route.id)) return "Efficient draft, needs careful review";
+  return "Scoped usage with staged escalation";
 }
 
 function clamp(value, min, max) {
@@ -257,14 +277,14 @@ function estimateCost(model, tokens, outputRatio = 0.32) {
   return (input / 1_000_000) * model.inputCost + (output / 1_000_000) * model.outputCost;
 }
 
-function similarBenchmarks(profile) {
-  return BENCHMARKS.map((benchmark) => {
-    const typeScore = benchmark.type === profile.type ? 4 : 0;
-    const skillScore = benchmark.tags.filter((tag) => profile.skills.includes(tag)).length;
-    return { ...benchmark, score: typeScore + skillScore };
+function similarSignals(profile) {
+  return DECISION_SIGNALS.map((signal) => {
+    const typeScore = signal.type === profile.type ? 4 : 0;
+    const skillScore = signal.tags.filter((tag) => profile.skills.includes(tag)).length;
+    return { ...signal, score: typeScore + skillScore };
   })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 4);
+    .slice(0, 3);
 }
 
 function skillFit(model, profile) {
@@ -326,9 +346,9 @@ function singleModelRoutes(baseTokens, profile) {
       bestFor: model.id === "claude" ? "Architecture and reasoning" : model.id === "codex" ? "Implementation with tools" : "Scoped drafts and reviewable code",
       tradeoff:
         model.id === "claude"
-          ? "Higher token use, stronger design judgment"
+          ? "More analysis, stronger design judgment"
           : model.id === "codex"
-            ? "Strong convenience, external provider dependency"
+            ? "Best workflow fit when implementation is clear"
             : "Efficient but needs review",
       why:
         model.id === "claude"
@@ -398,7 +418,7 @@ function comboRoutes(baseTokens, profile) {
       privacy: 61,
       developerEffort: 18,
       bestFor: "Fast implementation and low setup effort",
-      tradeoff: "Higher usage can be worth it for flow",
+      tradeoff: "Less orchestration, fewer handoffs",
       why: "Codex wins when the fastest path to a reliable code change is more valuable than route orchestration.",
       fail: "It can spend extra context on planning if the task is vague or very large.",
       switch: "Use a scoped combo for broad tasks, or local-first when private code cannot leave the environment.",
@@ -416,7 +436,7 @@ function comboRoutes(baseTokens, profile) {
       privacy: 58,
       developerEffort: 27,
       bestFor: "Architecture-heavy product work",
-      tradeoff: "Highest confidence, higher usage",
+      tradeoff: "Highest confidence, more review time",
       why: "This route combines implementation strength with a second-pass design review for higher quality decisions.",
       fail: "It can be too heavy for simple UI copy, CRUD edits, or tasks with clear acceptance criteria.",
       switch: "Use Codex direct for straightforward implementation, or a lightweight route when human review is available.",
@@ -604,26 +624,25 @@ function updateQuote() {
   const profile = profileTask(task);
   const routes = buildRoutes(task, profile, preferences.repoSize, preferences);
   const bestRoute = routes[0];
-  const benchmarks = similarBenchmarks(profile);
+  const signals = similarSignals(profile);
 
   renderSummary(bestRoute, preferences);
   renderPlan(bestRoute);
   renderComparison(routes, bestRoute);
-  renderInsights(profile, benchmarks, bestRoute);
+  renderInsights(profile, signals, bestRoute);
   renderRationale(bestRoute);
 }
 
 function renderSummary(route, preferences) {
   document.querySelector("#routeTitle").textContent = route.name;
-  document.querySelector("#goalBadge").textContent = GOAL_LABELS[preferences.goal] || "Best outcome";
-  document.querySelector("#qualityScore").textContent = route.quality;
-  document.querySelector("#efficiencyScore").textContent = route.tokenEfficiency;
-  document.querySelector("#costDetail").textContent =
-    `${(route.tokensPerQuality / 1000).toFixed(1)}k tokens / quality pt · ${money(route.cost)} est.`;
+  document.querySelector("#goalBadge").textContent = GOAL_LABELS[preferences.goal] || "Best product outcome";
+  document.querySelector("#qualityScore").textContent = band(route.quality);
+  document.querySelector("#efficiencyScore").textContent = valueBand(route.tokenEfficiency);
+  document.querySelector("#costDetail").textContent = usageNote(route);
   document.querySelector("#effortScore").textContent = effortLabel(route.developerEffort);
   document.querySelector("#reliabilityScore").textContent = reliabilityLabel(route.reliability);
   document.querySelector("#confidenceBadge").textContent =
-    route.reliability >= 86 ? "High confidence" : "Review advised";
+    route.reliability >= 86 ? "Strong fit" : "Review advised";
 }
 
 function renderPlan(route) {
@@ -637,7 +656,7 @@ function renderPlan(route) {
         <strong>${step.title}</strong>
         <span>${step.agent}</span>
         <p>${step.description}</p>
-        <small>${compactTokens(step.tokens)}</small>
+        <small>${index === 0 ? "Scope" : index === 1 ? "Execute" : "Review"}</small>
       </div>
     `;
     timeline.appendChild(item);
@@ -658,10 +677,10 @@ function renderComparison(routes, bestRoute) {
         <span>${route.provider}${route.id === bestRoute.id ? " · Selected" : ""}</span>
       </td>
       <td>${route.bestFor}</td>
-      <td>${route.quality}</td>
+      <td>${band(route.quality)}</td>
       <td>
-        <strong>${route.tokenEfficiency}</strong>
-        <span>${compactTokens(route.tokens)} · ${money(route.cost)}</span>
+        <strong>${valueBand(route.tokenEfficiency)}</strong>
+        <span>${usageNote(route)}</span>
       </td>
       <td>${effortLabel(route.developerEffort)}</td>
       <td>${route.tradeoff}</td>
@@ -670,7 +689,7 @@ function renderComparison(routes, bestRoute) {
   });
 }
 
-function renderInsights(profile, benchmarks, route) {
+function renderInsights(profile, signals, route) {
   document.querySelector("#taskType").textContent = profile.label;
   document.querySelector("#taskSummary").textContent = profile.summary;
 
@@ -682,25 +701,24 @@ function renderInsights(profile, benchmarks, route) {
     tags.appendChild(span);
   });
 
-  const benchmarkList = document.querySelector("#benchmarkList");
-  benchmarkList.innerHTML = "";
-  benchmarks.forEach((benchmark) => {
+  const signalList = document.querySelector("#signalList");
+  signalList.innerHTML = "";
+  signals.forEach((signal) => {
     const item = document.createElement("div");
     item.innerHTML = `
-      <strong>${benchmark.title}</strong>
-      <span>${compactTokens(benchmark.tokens)} · quality ${benchmark.quality}</span>
-      <p>${benchmark.outcome}</p>
+      <strong>${signal.title}</strong>
+      <p>${signal.outcome}</p>
     `;
-    benchmarkList.appendChild(item);
+    signalList.appendChild(item);
   });
 
   const sensitive = profile.type === "security_review" || route.privacy >= 90;
   document.querySelector("#policyVerdict").textContent = sensitive
-    ? "Privacy-first route active"
-    : "Approval before sensitive context";
+    ? "Start with local context control"
+    : "Keep humans in the loop";
   document.querySelector("#policyNote").textContent = sensitive
-    ? "Keep early profiling local, redact secrets, and require approval before external model escalation."
-    : "Require approval before sending repository context, customer data, secrets, or production credentials to external providers.";
+    ? "For sensitive tasks, the first step should classify context locally, redact secrets, and escalate only the slices that need stronger reasoning."
+    : "For production code, use AgentQuote as a planning decision. Developers still review diffs, tests, sensitive context, and deployment impact.";
 }
 
 function renderRationale(route) {
