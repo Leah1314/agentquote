@@ -1,23 +1,23 @@
 # AgentQuote
 
-AgentQuote helps developers choose the right AI agent route before a task starts.
+AgentQuote is a pre-run advisor for AI coding agents.
 
-Instead of optimizing only for the lowest token cost, AgentQuote compares routes by expected quality, developer effort, reliability, privacy, speed, and token efficiency. The goal is to help teams decide when to use Codex, Claude, open models, local models, or a routed agent combination.
+It helps developers decide whether a task should use Codex, Claude, an open model, a local workflow, or a staged route before spending time, tokens, and review effort.
 
 Live demo: https://leah1314.github.io/agentquote/
 
 ## What it does
 
-- Profiles a developer task by context size, ambiguity, required skills, and review risk.
-- Recommends the best agent route for the task, not just the lowest-cost option.
-- Compares single-agent and routed-agent strategies across quality, effort, reliability, and token value.
-- Explains why the route fits, where it may fail, and when to switch to another route.
-- Shows lightweight benchmark evidence from similar task patterns.
+- Reads the task type, project context, ambiguity, privacy risk, and review capacity.
+- Recommends a practical agent setup instead of defaulting to the lowest-cost model.
+- Compares single-agent and staged-agent routes across outcome fit, token value, review effort, and reliability.
+- Explains why a route fits, what to watch for, and when to switch.
+- Shows the decision signals that would become real telemetry in a production version.
 
 ## Why it matters
 
-Developers often choose an agent after work has already started. AgentQuote moves that decision earlier, before token spend, workflow lock-in, or quality tradeoffs become expensive.
+Developers often choose an agent after the work has already started. AgentQuote moves that decision earlier, before workflow lock-in, context exposure, or quality tradeoffs become expensive.
 
 ## Current prototype
 
-This version is a static front-end prototype with simulated scoring and benchmark data. A production version would connect to real task history, model pricing, repository metadata, and post-run feedback to continuously improve recommendations.
+This is a static front-end prototype. A production version would connect to repository metadata, model pricing, run history, evaluation results, and post-run review feedback.
